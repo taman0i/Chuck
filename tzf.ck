@@ -1,3 +1,5 @@
+/* through-zero flanger */
+
 //入力ファイルを読み込む
 SndBuf input => Gain dry => Gain mixer; //原音
 input.read("input.wav");   //入力
