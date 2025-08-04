@@ -1,8 +1,8 @@
 /* through-zero flanger */
 
 //入力ファイルを読み込む
-SndBuf input => Gain dry => Gain mixer; //原音
-input.read("input.wav");   //入力
+SndBuf input => Gain dry => Gain mixer;
+input.read("input.wav");   //入力ファイル
 input.loop(0);  //ループ再生無効
 input.gain(0.5);    //入力ゲイン
 
@@ -11,7 +11,7 @@ int totalSamples;
 input.samples() => totalSamples;    //サンプル数を変数に代入
 
 //ディレイ
-Delay fixedDelay => Gain wet => mixer;  //ウェット
+Delay fixedDelay => Gain wet => mixer;
 fixedDelay.max(420::samp);  //最大ディレイタイム
 fixedDelay.delay(210::samp);    //固定ディレイタイム(最大ディレイタイム*1/2。基準となる)
 
@@ -57,3 +57,4 @@ while (samplePos < totalSamples) {
     //サンプル位置を更新
     samplePos++;
 }
+
