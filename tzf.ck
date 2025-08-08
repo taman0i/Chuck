@@ -1,5 +1,5 @@
 /*
-through-zero flanger
+擬似 through-zero flanger
 ① ドライ成分(原音)、
 ② fixedDelayを通った成分(みなしドライ。基準となる)、
 ③ variableDelayを通った成分(本来のフランジャーのウェット成分と同等)、
@@ -51,15 +51,16 @@ int samplePos;  //サンプル位置を追跡
 
 //処理ループ
 while (samplePos < totalSamples) {
+    //1サンプル進める
+    1::samp => now;
+
     //ディレイタイムをwavファイルで更新
     210::samp + (lfo.last() * 210::samp) => variableDelay.delay;    //最大ディレイタイム0～420サンプル(wavファイルが-1～1の値をとることを想定しています)
     
     //フィードバックゲインをwavファイルで変調
     0.25 +(feedbackLFO.last() * 0.25) => feedback.gain;   //フィードバックゲイン0～0.5(wavファイルが-1～1の値をとることを想定しています)
     
-    //1サンプル進める
-    1::samp => now;
-    
     //サンプル位置を更新
     samplePos++;
 }
+
