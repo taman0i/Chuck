@@ -1,4 +1,10 @@
-/* through-zero flanger */
+/*
+through-zero flanger
+① ドライ成分(原音)、
+② fixedDelayを通った成分(みなしドライ。基準となる)、
+③ variableDelayを通った成分(本来のフランジャーのウェット成分と同等)、
+の3つから、①の原音を除けば、スルー・ゼロ・フランジャーが実現できる、という意図です。
+*/
 
 //入力ファイルを読み込む
 SndBuf input => Gain dry => Gain mixer;
@@ -16,19 +22,19 @@ fixedDelay.max(420::samp);  //最大ディレイタイム
 fixedDelay.delay(210::samp);    //固定ディレイタイム(最大ディレイタイム*1/2。基準となる)
 
 SndBuf lfo => blackhole;
-lfo.read("a.wav");    //ディレイタイム変調用のファイル
+lfo.read("a.wav");    //ディレイタイム用のファイル
 lfo.loop(1);    //ループ再生を有効化
 
 //可変ディレイとフィードバック
 Gain delayInput => Delay variableDelay => Gain invert => wet;
 variableDelay.max(420::samp);   //最大ディレイタイム
-invert.gain(-1.0);  //位相を反転
+invert.gain(-1.0);  //位相を反転(適宜)
 
 variableDelay => Gain feedback => delayInput;   //フィードバック
 feedback.gain(0.5);   //フィードバックゲインの初期値
 
 SndBuf feedbackLFO => blackhole;
-feedbackLFO.read("b.wav");    //フィードバックゲイン変調用のファイル
+feedbackLFO.read("b.wav");    //フィードバックゲイン用のファイル
 feedbackLFO.loop(1);    //ループ再生有効
 
 //信号接続をループ外で一度だけ行う
@@ -36,7 +42,7 @@ input => fixedDelay;    //固定ディレイに接続
 input => delayInput;    //可変ディレイの入力に接続
 
 //ゲイン調整
-dry.gain(0.0);  // 原音を絞り切る
+dry.gain(0.0);  // 原音(絞りきる)
 wet.gain(0.5);  // ウェット(みなしドライ+ウェット)
 mixer.gain(1);
 mixer => dac;   //出力
@@ -57,4 +63,3 @@ while (samplePos < totalSamples) {
     //サンプル位置を更新
     samplePos++;
 }
-
