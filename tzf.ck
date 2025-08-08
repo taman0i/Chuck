@@ -47,20 +47,24 @@ wet.gain(0.5);  // ウェット(みなしドライ+ウェット)
 mixer.gain(1);
 mixer => dac;   //出力
 
-int samplePos;  //サンプル位置を追跡
+//サンプル位置を追跡
+int samplePos;  // サンプル位置を追跡
 
-//処理ループ
+// 処理ループ
 while (samplePos < totalSamples) {
-    //1サンプル進める
+    // 1サンプル進める
     1::samp => now;
 
-    //ディレイタイムをwavファイルで更新
-    210::samp + (lfo.last() * 210::samp) => variableDelay.delay;    //最大ディレイタイム0～420サンプル(wavファイルが-1～1の値をとることを想定しています)
-    
-    //フィードバックゲインをwavファイルで変調
-    0.25 +(feedbackLFO.last() * 0.25) => feedback.gain;   //フィードバックゲイン0～0.5(wavファイルが-1～1の値をとることを想定しています)
-    
-    //サンプル位置を更新
+    // lfo と feedbackLFO の位置を1サンプル進める
+    1::samp => lfo.pos => now;  // lfo のポジションを進める
+    1::samp => feedbackLFO.pos => now;  // feedbackLFO のポジションを進める
+
+    // ディレイタイムを wav ファイルで更新
+    210::samp + (lfo.last() * 210::samp) => variableDelay.delay;  // 最大ディレイタイム0～420サンプル
+
+    // フィードバックゲインを wav ファイルで変調
+    0.25 + (feedbackLFO.last() * 0.25) => feedback.gain;  // フィードバックゲイン0～0.5
+
+    // サンプル位置を更新
     samplePos++;
 }
-
